@@ -1,0 +1,39 @@
+# Versão do Docker Compose
+version: '3.8'
+
+# Lista de todos os serviços (containers) que nosso projeto precisa
+services:
+  
+  # Nosso primeiro serviço: o banco de dados Postgres
+  db:
+    # 1. A imagem que vamos usar (o 'postgres' do seu comando)
+    image: postgres:15-alpine  # (Estou usando a 'alpine' que é mais leve)
+
+    # 2. O nome do container (o '--name telemedicinadb' do seu comando)
+    container_name: telemedicinadb
+    
+    # 3. As variáveis de ambiente (o '-e ...' do seu comando)
+    #    E aqui adicionamos o usuário e o nome do banco para bater com sua URL
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: telemedicinadb123
+      POSTGRES_DB: telemedicinadb
+    
+    # 4. As portas (o '-p 5432:5432' do seu comando)
+    #    Formato: "Porta_da_sua_Maquina:Porta_do_Container"
+    ports:
+      - "5432:5432"
+      
+    # 5. (BÔNUS) Persistência de dados
+    #    Isso garante que seus dados NÃO SEJAM APAGADOS quando você
+    #    parar o container. Ele salva os dados numa pasta local.
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      
+    # 6. (BÔNUS) Reiniciar sempre
+    #    Garante que o banco suba automaticamente se o PC reiniciar
+    restart: always
+
+# Definição do volume que usamos acima
+volumes:
+  postgres-data:

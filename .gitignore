@@ -1,0 +1,12 @@
+# Arquivos de Sistema Operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos de Configuração de Editor
+.vscode/
+.idea/
+
+# Dados do Docker
+# ISSO É MUITO IMPORTANTE!
+# Ignora a pasta que o docker-compose usa para salvar o banco
+postgres-data/

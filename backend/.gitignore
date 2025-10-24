@@ -1,0 +1,15 @@
+node_modules
+# Keep environment variables out of version control
+.env
+
+/generated/prisma
+# Pasta de 'build' do TypeScript (MUITO IMPORTANTE)
+dist/
+
+# Logs de erro do Node
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Arquivos de Sistema (redundante, mas bom ter)
+.DS_Store

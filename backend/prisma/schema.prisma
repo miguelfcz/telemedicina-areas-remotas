@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo principal para login. Um usuário pode ser PACIENTE ou PROFISSIONAL
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String    // Vamos guardar o hash da senha
+  nome      String
+  role      UserRole  // "PACIENTE" ou "PROFISSIONAL"
+
+  // Relacionamentos
+  profile         Profile?        // Perfil com dados extras
+  agendamentosComoPaciente   Agendamento[] @relation("PacienteAgendamentos")
+  agendamentosComoProfissional Agendamento[] @relation("ProfissionalAgendamentos")
+  disponibilidades  Disponibilidade[]
+  mensagensEnviadas Mensagem[]
+}
+
+enum UserRole {
+  PACIENTE
+  PROFISSIONAL
+}
+
+// Dados extras que só um profissional tem (CRM) ou paciente (ex: localidade)
+model Profile {
+  id        String  @id @default(uuid())
+  crm       String? // O '?' torna o campo opcional
+  especialidade String?
+  localidade  String?
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique // Link 1-para-1 com o User
+}
+
+// Horários que o PROFISSIONAL cadastra
+model Disponibilidade {
+  id           String   @id @default(uuid())
+  diaDaSemana  Int      // 0 = Domingo, 1 = Segunda, etc.
+  horaInicio   String   // Ex: "09:00"
+  horaFim      String   // Ex: "17:00"
+
+  profissional User   @relation(fields: [profissionalId], references: [id])
+  profissionalId String
+}
+
+// A consulta em si
+model Agendamento {
+  id        String   @id @default(uuid())
+  dataHora  DateTime // Data e hora exata da consulta
+  status    String   // "PENDENTE", "CONFIRMADO", "CANCELADO"
+
+  paciente    User   @relation("PacienteAgendamentos", fields: [pacienteId], references: [id])
+  pacienteId  String
+
+  profissional User   @relation("ProfissionalAgendamentos", fields: [profissionalId], references: [id])
+  profissionalId String
+
+  mensagens   Mensagem[] // Histórico da consulta
+}
+
+// O "compartilhamento de informações"
+model Mensagem {
+  id        String   @id @default(uuid())
+  conteudo  String
+  criadoEm  DateTime @default(now())
+
+  remetente     User   @relation(fields: [remetenteId], references: [id])
+  remetenteId   String
+
+  agendamento   Agendamento @relation(fields: [agendamentoId], references: [id])
+  agendamentoId String
+}
