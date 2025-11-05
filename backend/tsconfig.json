@@ -9,11 +9,10 @@
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
     "target": "esnext",
-    "types": [],
+    // "types": [], // REMOVA OU COMENTE ESTA LINHA
     // For nodejs:
-    // "lib": ["esnext"],
-    // "types": ["node"],
-    // and npm install -D @types/node
+    "lib": ["esnext"],
+    "types": ["node"], // HABILITE ESTA LINHA
 
     // Other Outputs
     "sourceMap": true,
