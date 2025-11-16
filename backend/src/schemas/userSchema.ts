@@ -20,3 +20,23 @@ export const registerUserSchema = z.object({
     }),
   }),
 });
+
+export const loginUserSchema = z.object({
+  body: z.object({
+    email: z.string()
+      .min(1, {message: 'Email é obrigatório' })
+      .email({ message: 'Email inválido' }),
+
+    password: z.string()
+      .min(1, { message: 'Senha é obrigatória' })
+  }),
+});
+
+export const updateProfileSchema = z.object({
+  body: z.object({
+    crm: z.string().optional(),
+    especialidade: z.string().optional(),
+    localidade: z.string().optional(),
+  })
+  .strict(),
+});
